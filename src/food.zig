@@ -22,18 +22,19 @@ pub const Food = struct {
         var prng = std.Random.DefaultPrng.init(seed);
         const rand = prng.random();
 
-        const x: f32 = @floatFromInt(rand.intRangeAtMost(u8, 0, 25));
-        const y: f32 = @floatFromInt(rand.intRangeAtMost(u8, 0, 25));
+        const x: f32 = @floatFromInt(rand.intRangeAtMost(u8, 0, screen.cellCount - 1));
+        const y: f32 = @floatFromInt(rand.intRangeAtMost(u8, 0, screen.cellCount - 1));
         return .{.x = x, .y = y};
     }
 
-    pub fn deinit(self: Food) void {
+    pub fn deinit(self: *Food) void {
         rl.unloadTexture(self.texture);
     }
 
-    pub fn draw(self: Food) void {
+    pub fn draw(self: *Food) void {
         const x: i32 = @intFromFloat(self.position.x);
         const y: i32 = @intFromFloat(self.position.y);
+
         rl.drawTexture(
             self.texture,
             x * screen.cellSize,
