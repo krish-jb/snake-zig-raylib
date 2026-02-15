@@ -9,7 +9,7 @@ pub const Food = struct {
 
     pub fn init() !Food {
         const image = try rl.loadImage("graphics/food.png");
-        defer rl.unloadImage(image);
+        defer image.unload();
 
         return Food {
             .position = getRandomPosition(),

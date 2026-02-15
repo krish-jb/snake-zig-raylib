@@ -10,9 +10,11 @@ pub fn Deque(comptime T: type) type {
 
         const Self = @This();
 
-        pub fn init(allocator: std.mem.Allocator) !Self {
-            const initial_capacity = 8;
-            const buffer = try allocator.alloc(T, initial_capacity);
+        pub fn init(allocator: std.mem.Allocator, initial_capacity: ?usize,) !Self {
+            const buffer = try allocator.alloc(T,
+                initial_capacity orelse 8
+            );
+
             return Self{
                 .buffer = buffer,
                 .allocator = allocator,
