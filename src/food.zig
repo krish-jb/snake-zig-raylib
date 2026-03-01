@@ -2,6 +2,7 @@ const std = @import("std");
 const rl = @import("raylib");
 const color = @import("colors.zig");
 const screen = @import("screen.zig");
+const Deque = @import("deque.zig").Deque;
 
 pub const Food = struct {
     position: rl.Vector2,
@@ -27,6 +28,14 @@ pub const Food = struct {
         return .{.x = x, .y = y};
     }
 
+    fn positionInDeque(snakeBody: *Deque(rl.Vector2), newPosition: rl.Vector2) bool {
+        for (0..snakeBody.*.len()) |i| {
+            const position = snakeBody.*.get(i);
+            if (position.?.x == newPosition.x and position.?.y == newPosition.y) return true;
+        }
+        return false;
+    }
+
     pub fn deinit(self: *Food) void {
         rl.unloadTexture(self.texture);
     }
@@ -41,5 +50,17 @@ pub const Food = struct {
             y * screen.cellSize,
             .white
         );
+    }
+
+    pub fn isColided(self: *Food, snakeHeadkPos: rl.Vector2) bool {
+        return snakeHeadkPos.x == self.position.x and snakeHeadkPos.y == self.position.y;
+    }
+
+    pub fn changePosition(self: *Food, snakeBody: *Deque(rl.Vector2)) void {
+        var position = getRandomPosition();
+        while (positionInDeque(snakeBody, position)) {
+            position = getRandomPosition();
+        }
+        self.position = position;
     }
 };

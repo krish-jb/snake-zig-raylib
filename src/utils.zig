@@ -5,11 +5,14 @@ pub fn interval(
     intervalTime: f64,
     lastUpdatedTime: *f64,
     context: anytype,
-    callback: fn (@TypeOf(context)) anyerror!void
+    comptime callback: anytype
 ) !void {
     const currentTime = rl.getTime();
     if (currentTime - lastUpdatedTime.* >= intervalTime) {
-        try callback(context);
-        lastUpdatedTime.* = currentTime;
+        const result = callback(&context.snake, context.snakeNextDirection);
+        if (@typeInfo(@TypeOf(result)) == .error_union) {
+            try result;
+        }
+        lastUpdatedTime.* = rl.getTime();
     }
 }
